@@ -2,10 +2,35 @@ import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import 'antd/dist/antd.css';
 import './index.css';
-import { Checkbox } from 'antd';
+import { Checkbox, Tag } from 'antd';
 import ChecboxMultiply from './ChecboxMultiply';
 
 const CheckboxGroup = Checkbox.Group;
+const colorList = [
+  'magenta',
+  'red',
+  'volcano',
+  'orange',
+  'gold',
+  'lime',
+  'green',
+  'cyan',
+  'blue',
+  'geekblue',
+  'purple',
+];
+
+function generateRandomColor() {
+  // 生成 [n,m]，包含n和m的随机数
+  const m = 10,
+    n = 0;
+  const randomIndex = parseInt(Math.random() * (m - n + 1) + n);
+  return colorList[randomIndex];
+}
+// for (let i = 0; i < 10; i++) {
+//   const randomColor = generateRandomColor();
+//   console.log(`randomColor-${i}`, randomColor);
+// }
 
 const data = [
   {
@@ -49,6 +74,7 @@ const App = () => {
   const [checkAll, setCheckAll] = useState(false);
   // checbox list
   const [checkList, setCheckList] = useState(data);
+  const [allcheckedList, setAllcheckedList] = useState(data);
 
   const onChange = (list) => {
     setCheckedList(list);
@@ -90,6 +116,21 @@ const App = () => {
     setCheckList([...list]);
   };
 
+  // 展示所有选中的项
+  const showCheckedItems = () => {
+    const data = [];
+    checkList.forEach((item) => {
+      if (item.children.length) {
+        item.children.forEach((c) => {
+          if (c.selected) {
+            data.push(c);
+          }
+        });
+      }
+    });
+    return data.map((d) => <Tag color={generateRandomColor()}>{d.value}</Tag>);
+  };
+
   return (
     <>
       <section style={{ border: '1px solid blue', padding: '10px' }}>
@@ -124,11 +165,16 @@ const App = () => {
         <h1>测试</h1>
         {checkList.map((item) => (
           <ChecboxMultiply
+            key={item.value}
             checkboxItem={item}
             checkAllChange={handleCheckAllChange}
             checkSingleChange={handleCheckSingleChange}
           />
         ))}
+      </section>
+      <section>
+        <h1>已选择的项</h1>
+        {showCheckedItems()}
       </section>
     </>
   );
